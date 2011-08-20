@@ -24,6 +24,11 @@ namespace ludumdare
         SpriteBatch spriteBatch;
         SpriteFont font;
 
+        BasicEffect basicEffect;
+        VertexPositionColor[] vertices;
+
+
+        SpriteBase boundingTest;
         List<SpriteBase> spritesToDraw;
 
         public Game1()
@@ -49,6 +54,11 @@ namespace ludumdare
             graphics.ApplyChanges();
             Window.Title = "XNA LD Framework";
 
+            basicEffect = new BasicEffect(graphics.GraphicsDevice);
+            basicEffect.VertexColorEnabled = true;
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height, 0, 0, 1);
+
+            vertices = new VertexPositionColor[4];
 
             spritesToDraw = new List<SpriteBase>();
 
@@ -70,22 +80,23 @@ namespace ludumdare
             // Pointer to Graphics Device
             pDevice = graphics.GraphicsDevice;
 
-            SpriteBase herpSprite = new SpriteBase( new Vector2( pDevice.PresentationParameters.BackBufferWidth / 2, pDevice.PresentationParameters.BackBufferHeight / 2));
+            boundingTest = new SpriteBase(new Vector2(10, 10));
 
-            Texture2D _9pix = Content.Load<Texture2D>("9pixtest");
-            Color[,] _9pixArray = TexHelper.Tex2DArray(_9pix, null);
+            boundingTest.LoadContent(Content, "boundingtest", OriginPos.TOP_LEFT);
 
-            foreach (Color col in _9pixArray)
-            {
-                Console.Write("RGB: " + col.R + "," + col.G + "," + col.B + "\n");
-            }
+            vertices[0].Position = new Vector3(boundingTest.m_AABBs[0].Left, boundingTest.m_AABBs[0].Top, 0);
+            vertices[0].Color = Color.Black;
 
-            herpSprite.LoadContent(Content, "herp", OriginPos.CENTER);
+            vertices[1].Position = new Vector3(boundingTest.m_AABBs[0].Right, boundingTest.m_AABBs[0].Top, 0);
+            vertices[1].Color = Color.Black;
 
-            herpSprite.Rotation = 90.0f;
-            herpSprite.Scale = 0.5f;
+            vertices[2].Position = new Vector3(boundingTest.m_AABBs[0].Right, boundingTest.m_AABBs[0].Bottom, 0);
+            vertices[2].Color = Color.Black;
 
-            spritesToDraw.Add(herpSprite);
+            vertices[3].Position = new Vector3(boundingTest.m_AABBs[0].Left, boundingTest.m_AABBs[0].Bottom, 0);
+            vertices[3].Color = Color.Black;
+
+            spritesToDraw.Add(boundingTest);
 
         }
 
@@ -110,8 +121,8 @@ namespace ludumdare
                 this.Exit();
 
             KeyboardState kbState = Keyboard.GetState();
-            
-        
+
+            boundingTest.Position += new Vector2(1.0f, 0.0f);
 
             base.Update(gameTime);
         }
@@ -124,6 +135,17 @@ namespace ludumdare
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            short[] indices = new short[5] { 0, 1, 2, 3, 0 };
+
+            basicEffect.CurrentTechnique.Passes[0].Apply();
+            graphics.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineStrip,
+                                                                                    vertices,
+                                                                                    0,
+                                                                                    4,
+                                                                                    indices,
+                                                                                    0,
+                                                                                    4
+                                                                                    );
 
             spriteBatch.Begin();
 
