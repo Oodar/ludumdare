@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ludumdare.src
 {
-
+    #region enum
     enum OriginPos
     {
         TOP_LEFT = 0,
@@ -18,7 +18,8 @@ namespace ludumdare.src
         BOTTOM_RIGHT,
         CENTER,
     }
-
+    #endregion
+  
     class SpriteBase
     {
         #region Member Variables
@@ -30,6 +31,14 @@ namespace ludumdare.src
         float m_fScale;
         float m_fRotation; // Rotation: IN DEGREES
 
+        int m_iCurrFrame;
+        int m_iMaxFrames;
+        int m_iFrameWidth;
+
+        float m_fFrameTime;
+        float m_fTimeAccumulator;
+
+        Rectangle m_frameRect;
         public List<Rectangle> m_AABBs;
 
         #endregion
@@ -58,38 +67,63 @@ namespace ludumdare.src
 
         #region Constructors
 
-        public SpriteBase()
-        {
-            m_vecPos = new Vector2(0, 0);
-            m_fScale = 1.0f;
-            m_fRotation = 0.0f;
-
-            m_AABBs = new List<Rectangle>();
-        }
-
-
-        public SpriteBase(Vector2 pos)
+        public SpriteBase(Vector2 pos, int frameWidth, int frameRate )
         {
             m_vecPos = pos;
             m_fScale = 1.0f;
             m_fRotation = 0.0f;
 
+            m_iCurrFrame = 0;
+            m_iFrameWidth = frameWidth;
+
+            m_fFrameTime = (float)(1.0f / frameRate);
+            
             m_AABBs = new List<Rectangle>();
         }
 
         #endregion
-       
 
-        public void LoadContent(ContentManager contentManager, string texLocation, OriginPos origin )
+        #region LoadContent
+        public void LoadContent(ContentManager contentManager, string texLocation, OriginPos origin)
         {
             m_texBase = contentManager.Load<Texture2D>(texLocation);
             SetOrigin(origin);
+
+            m_iMaxFrames = m_texBase.Width / m_iFrameWidth - 1;
+
+            // Construct initial frame Rect
+            m_frameRect = new Rectangle(0, 0, m_iFrameWidth, m_texBase.Height);
+
             CalculateBoundingBoxes();
+        }
+        #endregion
+
+
+        public void Update( GameTime gameTime )
+        {  
+            m_fTimeAccumulator += (gameTime.ElapsedGameTime.Milliseconds / 100.0f);
+
+            if (m_fTimeAccumulator > m_fFrameTime )
+            {
+                if (m_iCurrFrame > m_iMaxFrames)
+                    m_iCurrFrame = 0;
+
+                m_frameRect.X = m_iCurrFrame * m_iFrameWidth;
+                m_frameRect.Y = 0;
+
+                m_frameRect.Width = m_iFrameWidth;
+                m_frameRect.Height = m_texBase.Height;
+
+                m_iCurrFrame++;
+
+                m_fTimeAccumulator = 0.0f;
+            }
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(m_texBase, m_vecPos, null, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
+            spriteBatch.Draw(m_texBase, m_vecPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
         }
 
 
@@ -123,55 +157,69 @@ namespace ludumdare.src
 
         private void CalculateBoundingBoxes()
         {
-            Color[,] baseTex2D = TexHelper.Tex2DArray(m_texBase, null);
+            //Color[,] baseTex2D = TexHelper.Tex2DArray(m_texBase, null);
 
-            int minX = m_texBase.Width;
-            int minY = m_texBase.Height;
-            int maxX = 0;
-            int maxY = 0;
+            Rectangle currentFrameRect = new Rectangle();
 
-            for (int x = 0; x < m_texBase.Width; x++)
+            // Calculate AABBs for each frame of the animation
+            for (int x = 0; x < m_iMaxFrames; x++)
             {
-                for (int y = 0; y < m_texBase.Height; y++)
+                // Calculate rect for the the frame @ x
+                currentFrameRect.X = x * m_iFrameWidth;
+                currentFrameRect.Y = 0;
+
+                currentFrameRect.Width = m_iFrameWidth;
+                currentFrameRect.Height = m_texBase.Height;
+
+                // Now grab the 2d texture array
+                Color[,] baseTex2D = TexHelper.Tex2DArray(m_texBase, currentFrameRect);
+
+                int minX = m_texBase.Width;
+                int minY = m_texBase.Height;
+                int maxX = 0;
+                int maxY = 0;
+
+                for (int i = 0; i < currentFrameRect.Width; i++)
                 {
-                    if (baseTex2D[x, y].A == 255 )
+                    for (int j = 0; j < currentFrameRect.Height; j++)
                     {
-                        if (x < minX)
+                        if (baseTex2D[i, j].A == 255)
                         {
-                            minX = x;    
-                        }
-                        if (x > maxX)
-                        {
-                            maxX = x;
-                        }
-                        if (y < minY)
-                        {
-                            minY = y;
-                        }
-                        if (y > maxY)
-                        {
-                            maxY = y;
+                            if (i < minX)
+                            {
+                                minX = i;
+                            }
+                            if (i > maxX)
+                            {
+                                maxX = i;
+                            }
+                            if (j < minY)
+                            {
+                                minY = j;
+                            }
+                            if (j > maxY)
+                            {
+                                maxY = j;
+                            }
                         }
                     }
                 }
+
+                Console.WriteLine("Frame Number: " + x + " Max X: " + maxX + " Max Y: " + maxY + " MinX: " + minX + " MinY: " + minY);
+
+                // Calculate middle position
+                int midX = ((maxX - minX) / 2) + minX;
+                int midY = ((maxY - minY) / 2) + minY;
+
+                //Console.WriteLine("MidX: " + midX + " MidY: " + midY);
+
+                Rectangle bbox = new Rectangle(minX, minY, maxX, maxY);
+
+                m_AABBs.Add(bbox);
+
+                //Console.WriteLine(bbox.ToString());
+
             }
-
-            Console.WriteLine("Max X: " + maxX + " Max Y: " + maxY + " MinX: " + minX + " MinY: " + minY);
-            
-            // Calculate middle position
-            int midX = ((maxX - minX) / 2) + minX;
-            int midY = ((maxY - minY) / 2) + minY;
-
-            Console.WriteLine("MidX: " + midX + " MidY: " + midY);
-
-            Rectangle bbox = new Rectangle(minX, minY, maxX, maxY);
-
-            m_AABBs.Add(bbox);
-
-            Console.WriteLine(bbox.ToString());
-
-
         }
-
     }
 }
