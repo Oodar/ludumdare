@@ -76,7 +76,7 @@ namespace ludumdare.src
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(m_texBase, m_vecPos, null, Color.White, m_fRotation, m_vecOrigin, m_fScale, SpriteEffects.None, 1);
+            spriteBatch.Draw(m_texBase, m_vecPos, null, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
         }
 
 
