@@ -26,9 +26,6 @@ namespace ludumdare
 
         List<SpriteBase> spritesToDraw;
 
-        Texture2D backgroundTexture;
-        Texture2D smokeTexture;
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -74,6 +71,14 @@ namespace ludumdare
             pDevice = graphics.GraphicsDevice;
 
             SpriteBase herpSprite = new SpriteBase( new Vector2( pDevice.PresentationParameters.BackBufferWidth / 2, pDevice.PresentationParameters.BackBufferHeight / 2));
+
+            Texture2D _9pix = Content.Load<Texture2D>("9pixtest");
+            Color[,] _9pixArray = TexHelper.Tex2DArray(_9pix, null);
+
+            foreach (Color col in _9pixArray)
+            {
+                Console.Write("RGB: " + col.R + "," + col.G + "," + col.B + "\n");
+            }
 
             herpSprite.LoadContent(Content, "herp", OriginPos.CENTER);
 
