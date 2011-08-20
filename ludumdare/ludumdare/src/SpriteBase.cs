@@ -63,6 +63,11 @@ namespace ludumdare.src
             set { m_vecPos = value; }
         }
 
+        public int CurrentFrame
+        {
+            get { return m_iCurrFrame; }
+        }
+
         #endregion
 
         #region Constructors
@@ -114,7 +119,7 @@ namespace ludumdare.src
                 m_frameRect.Width = m_iFrameWidth;
                 m_frameRect.Height = m_texBase.Height;
 
-                m_iCurrFrame++;
+                m_iCurrFrame = (m_iCurrFrame + 1) % m_iMaxFrames;
 
                 m_fTimeAccumulator = 0.0f;
             }
