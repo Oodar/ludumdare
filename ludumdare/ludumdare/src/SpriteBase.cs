@@ -27,6 +27,25 @@ namespace ludumdare.src
         Vector2 m_vecOrigin;
         Texture2D m_texBase;
 
+        float m_fScale;
+        float m_fRotation; // Rotation: IN DEGREES
+
+        #endregion
+
+        #region Accessors
+
+        public float Scale
+        {
+            get { return m_fScale; }
+            set { m_fScale = value; }
+        }
+
+        public float Rotation
+        {
+            get { return m_fRotation; }
+            set { m_fRotation = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -34,12 +53,16 @@ namespace ludumdare.src
         public SpriteBase()
         {
             m_vecPos = new Vector2(0, 0);
+            m_fScale = 1.0f;
+            m_fRotation = 0.0f;
         }
 
 
         public SpriteBase(Vector2 pos)
         {
             m_vecPos = pos;
+            m_fScale = 1.0f;
+            m_fRotation = 0.0f;
         }
 
         #endregion
@@ -53,8 +76,9 @@ namespace ludumdare.src
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(m_texBase, m_vecPos, null, Color.White, 0.0f, m_vecOrigin, 1.0f, SpriteEffects.None, 1);
+            spriteBatch.Draw(m_texBase, m_vecPos, null, Color.White, m_fRotation, m_vecOrigin, m_fScale, SpriteEffects.None, 1);
         }
+
 
         #region Private Functions
         private void SetOrigin(OriginPos origin)
