@@ -1,3 +1,9 @@
 *.cache
 *.sln
 *.suo
+*.swp
+AssemblyInfo.cs
+*.csproj
+*.user
+*.contentproj
+*.gitignore~
