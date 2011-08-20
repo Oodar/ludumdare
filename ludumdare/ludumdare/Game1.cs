@@ -72,6 +72,16 @@ namespace ludumdare
             // TODO: use this.Content to load your game content here
             // Pointer to Graphics Device
             pDevice = graphics.GraphicsDevice;
+
+            SpriteBase herpSprite = new SpriteBase( new Vector2( pDevice.PresentationParameters.BackBufferWidth / 2, pDevice.PresentationParameters.BackBufferHeight / 2));
+
+            herpSprite.LoadContent(Content, "herp", OriginPos.CENTER);
+
+            herpSprite.Rotation = 90.0f;
+            herpSprite.Scale = 0.5f;
+
+            spritesToDraw.Add(herpSprite);
+
         }
 
         /// <summary>
@@ -111,6 +121,11 @@ namespace ludumdare
 
 
             spriteBatch.Begin();
+
+            foreach (SpriteBase sprite in spritesToDraw)
+            {
+                sprite.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
 
