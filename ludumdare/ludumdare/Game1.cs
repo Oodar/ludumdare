@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
+
+using ludumdare.src;
+
 namespace ludumdare
 {
     /// <summary>
@@ -17,7 +20,14 @@ namespace ludumdare
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
+        GraphicsDevice pDevice;
         SpriteBatch spriteBatch;
+        SpriteFont font;
+
+        List<SpriteBase> spritesToDraw;
+
+        Texture2D backgroundTexture;
+        Texture2D smokeTexture;
 
         public Game1()
         {
@@ -34,6 +44,16 @@ namespace ludumdare
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            graphics.PreferMultiSampling = true;
+
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.IsFullScreen = false;
+            graphics.ApplyChanges();
+            Window.Title = "XNA LD Framework";
+
+
+            spritesToDraw = new List<SpriteBase>();
 
             base.Initialize();
         }
@@ -47,7 +67,11 @@ namespace ludumdare
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            font = Content.Load<SpriteFont>("calibri");
+
             // TODO: use this.Content to load your game content here
+            // Pointer to Graphics Device
+            pDevice = graphics.GraphicsDevice;
         }
 
         /// <summary>
@@ -70,7 +94,9 @@ namespace ludumdare
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            KeyboardState kbState = Keyboard.GetState();
+            
+        
 
             base.Update(gameTime);
         }
@@ -83,7 +109,11 @@ namespace ludumdare
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+
+            spriteBatch.Begin();
+
+            spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
