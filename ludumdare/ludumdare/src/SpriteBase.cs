@@ -110,15 +110,13 @@ namespace ludumdare.src
 
             if (m_fTimeAccumulator > m_fFrameTime )
             {
-                if (m_iCurrFrame > m_iMaxFrames)
-                    m_iCurrFrame = 0;
-
                 m_frameRect.X = m_iCurrFrame * m_iFrameWidth;
                 m_frameRect.Y = 0;
 
                 m_frameRect.Width = m_iFrameWidth;
                 m_frameRect.Height = m_texBase.Height;
-
+                
+                // Increment frame counter (but loop around when max frames are reached)
                 m_iCurrFrame = (m_iCurrFrame + 1) % m_iMaxFrames;
 
                 m_fTimeAccumulator = 0.0f;
