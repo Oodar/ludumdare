@@ -7,3 +7,7 @@ AssemblyInfo.cs
 *.user
 *.contentproj
 *.gitignore~
+*.cachefile
+ludumdare/ludumdareContent
+ludumdare/ludumdare/bin
+ludumdare/ludumdare/obj
