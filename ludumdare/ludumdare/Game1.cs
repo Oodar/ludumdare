@@ -80,21 +80,9 @@ namespace ludumdare
             // Pointer to Graphics Device
             pDevice = graphics.GraphicsDevice;
 
-            boundingTest = new SpriteBase(new Vector2(10, 10));
+            boundingTest = new SpriteBase(new Vector2(10, 10), 85, 1);
 
-            boundingTest.LoadContent(Content, "boundingtest", OriginPos.TOP_LEFT);
-
-            vertices[0].Position = new Vector3(boundingTest.m_AABBs[0].Left, boundingTest.m_AABBs[0].Top, 0);
-            vertices[0].Color = Color.Black;
-
-            vertices[1].Position = new Vector3(boundingTest.m_AABBs[0].Right, boundingTest.m_AABBs[0].Top, 0);
-            vertices[1].Color = Color.Black;
-
-            vertices[2].Position = new Vector3(boundingTest.m_AABBs[0].Right, boundingTest.m_AABBs[0].Bottom, 0);
-            vertices[2].Color = Color.Black;
-
-            vertices[3].Position = new Vector3(boundingTest.m_AABBs[0].Left, boundingTest.m_AABBs[0].Bottom, 0);
-            vertices[3].Color = Color.Black;
+            boundingTest.LoadContent(Content, "slimesheet", OriginPos.TOP_LEFT);
 
             spritesToDraw.Add(boundingTest);
 
@@ -122,7 +110,22 @@ namespace ludumdare
 
             KeyboardState kbState = Keyboard.GetState();
 
-            boundingTest.Position += new Vector2(1.0f, 0.0f);
+            
+            //boundingTest.Position += new Vector2(1.0f, 0.0f);
+
+            foreach (SpriteBase sprite in spritesToDraw)
+            {
+                sprite.Update(gameTime);
+            }
+
+            // Update vertex positioning for the bounding box of boundingTest
+            Rectangle currentAABB = boundingTest.m_AABBs[boundingTest.CurrentFrame];
+            Vector2 currentPos = boundingTest.Position;
+
+            vertices[0].Position = new Vector3(currentPos.X + currentAABB.X, currentPos.Y + currentAABB.Y, 0);
+            vertices[1].Position = new Vector3(currentPos.X + currentAABB.Width, currentPos.Y + currentAABB.Y, 0);
+            vertices[2].Position = new Vector3(currentPos.X + currentAABB.Width, currentPos.Y + currentAABB.Height, 0);
+            vertices[3].Position = new Vector3(currentPos.X + currentAABB.X, currentPos.Y + currentAABB.Height, 0);
 
             base.Update(gameTime);
         }
@@ -137,6 +140,11 @@ namespace ludumdare
 
             short[] indices = new short[5] { 0, 1, 2, 3, 0 };
 
+            for (int i = 0; i < 4; i++)
+            {
+                vertices[i].Color = Color.Black;
+            }
+
             basicEffect.CurrentTechnique.Passes[0].Apply();
             graphics.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineStrip,
                                                                                     vertices,
@@ -148,6 +156,9 @@ namespace ludumdare
                                                                                     );
 
             spriteBatch.Begin();
+
+            spriteBatch.DrawString(font, "Current Frame: " + boundingTest.CurrentFrame, new Vector2(0, 100), Color.White);
+            spriteBatch.DrawString(font, "Current BB#: " + boundingTest.CurrentFrame, new Vector2(0, 120), Color.White);
 
             foreach (SpriteBase sprite in spritesToDraw)
             {
