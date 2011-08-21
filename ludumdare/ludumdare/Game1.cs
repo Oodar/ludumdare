@@ -27,6 +27,7 @@ namespace ludumdare
         BasicEffect basicEffect;
         VertexPositionColor[] vertices;
 
+        MultiAnimSprite multiAnimTest;
 
         SpriteBase boundingTest;
         List<SpriteBase> spritesToDraw;
@@ -80,11 +81,27 @@ namespace ludumdare
             // Pointer to Graphics Device
             pDevice = graphics.GraphicsDevice;
 
-            boundingTest = new SpriteBase(new Vector2(10, 10), 85, 1);
+            SpriteBase slimeCrouch = new SpriteBase(new Vector2(100, 100), 85, 2);
+            SpriteBase slimeDeath = new SpriteBase(new Vector2(100, 200), 85, 2);
+            SpriteBase slimeWalk = new SpriteBase(new Vector2(100, 300), 85, 2);
 
-            boundingTest.LoadContent(Content, "slimesheet", OriginPos.TOP_LEFT);
+            slimeCrouch.LoadContent(Content, "slimesheet-crouch", OriginPos.TOP_LEFT);
+            slimeDeath.LoadContent(Content, "slimesheet-death", OriginPos.TOP_LEFT);
+            slimeWalk.LoadContent(Content, "slimesheet", OriginPos.TOP_LEFT);
 
-            spritesToDraw.Add(boundingTest);
+
+            //spritesToDraw.Add(slimeCrouch);
+            //spritesToDraw.Add(slimeDeath);
+            //spritesToDraw.Add(slimeWalk);
+
+            multiAnimTest = new MultiAnimSprite(new Vector2(200, 200));
+
+            multiAnimTest.AddAnimation("WALK", slimeWalk);
+            multiAnimTest.AddAnimation("CROUCH", slimeCrouch);
+            multiAnimTest.AddAnimation("DEATH", slimeDeath);
+
+            multiAnimTest.PlayAnimation("WALK");
+
 
         }
 
@@ -110,7 +127,7 @@ namespace ludumdare
 
             KeyboardState kbState = Keyboard.GetState();
 
-
+            /*
             Vector2 currPos = boundingTest.Position;
 
             if (kbState.IsKeyDown(Keys.Left))
@@ -123,13 +140,31 @@ namespace ludumdare
             }
 
             boundingTest.Position = currPos;
+            */
 
+            if (kbState.IsKeyDown(Keys.C))
+            {
+                multiAnimTest.PlayAnimation("CROUCH");
+            }
+
+            if (kbState.IsKeyDown(Keys.D))
+            {
+                multiAnimTest.PlayAnimation("DEATH");
+            }
+
+            if (kbState.IsKeyDown(Keys.Left))
+            {
+                multiAnimTest.PlayAnimation("WALK");
+            }
 
             foreach (SpriteBase sprite in spritesToDraw)
             {
                 sprite.Update(gameTime);
             }
 
+            multiAnimTest.Update( gameTime );
+
+            /*
             // Update vertex positioning for the bounding box of boundingTest
             Rectangle currentAABB = boundingTest.m_AABBs[boundingTest.CurrentFrame];
             Vector2 currentPos = boundingTest.Position;
@@ -138,6 +173,7 @@ namespace ludumdare
             vertices[1].Position = new Vector3(currentPos.X + currentAABB.Width, currentPos.Y + currentAABB.Y, 0);
             vertices[2].Position = new Vector3(currentPos.X + currentAABB.Width, currentPos.Y + currentAABB.Height, 0);
             vertices[3].Position = new Vector3(currentPos.X + currentAABB.X, currentPos.Y + currentAABB.Height, 0);
+            */
 
             base.Update(gameTime);
         }
@@ -150,6 +186,7 @@ namespace ludumdare
         {
             GraphicsDevice.Clear(Color.Black);
 
+            /*
             short[] indices = new short[5] { 0, 1, 2, 3, 0 };
 
             for (int i = 0; i < 4; i++)
@@ -166,16 +203,19 @@ namespace ludumdare
                                                                                     0,
                                                                                     4
                                                                                     );
+             */
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, "Current Frame: " + boundingTest.CurrentFrame, new Vector2(0, 100), Color.White);
-            spriteBatch.DrawString(font, "Current BB#: " + boundingTest.CurrentFrame, new Vector2(0, 120), Color.White);
+            //spriteBatch.DrawString(font, "Current Frame: " + boundingTest.CurrentFrame, new Vector2(0, 100), Color.White);
+            //spriteBatch.DrawString(font, "Current BB#: " + boundingTest.CurrentFrame, new Vector2(0, 120), Color.White);
 
             foreach (SpriteBase sprite in spritesToDraw)
             {
-                sprite.Draw(spriteBatch);
+                sprite.Draw(spriteBatch, null);
             }
+
+            multiAnimTest.Draw(spriteBatch);
 
             spriteBatch.End();
 
