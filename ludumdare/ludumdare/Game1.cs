@@ -110,8 +110,20 @@ namespace ludumdare
 
             KeyboardState kbState = Keyboard.GetState();
 
-            
-            //boundingTest.Position += new Vector2(1.0f, 0.0f);
+
+            Vector2 currPos = boundingTest.Position;
+
+            if (kbState.IsKeyDown(Keys.Left))
+            {
+                currPos.X -= (15.0f * (gameTime.ElapsedGameTime.Milliseconds / 100.0f));
+            }
+            if (kbState.IsKeyDown(Keys.Right))
+            {
+                currPos.X += (15.0f * (gameTime.ElapsedGameTime.Milliseconds / 100.0f));
+            }
+
+            boundingTest.Position = currPos;
+
 
             foreach (SpriteBase sprite in spritesToDraw)
             {
@@ -136,13 +148,13 @@ namespace ludumdare
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             short[] indices = new short[5] { 0, 1, 2, 3, 0 };
 
             for (int i = 0; i < 4; i++)
             {
-                vertices[i].Color = Color.Black;
+                vertices[i].Color = Color.Red;
             }
 
             basicEffect.CurrentTechnique.Passes[0].Apply();
