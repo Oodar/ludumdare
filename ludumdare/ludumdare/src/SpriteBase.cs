@@ -125,9 +125,17 @@ namespace ludumdare.src
             
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Nullable<Vector2> overridePos )
         {
-            spriteBatch.Draw(m_texBase, m_vecPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
+            if (overridePos != null)
+            {
+                spriteBatch.Draw(m_texBase, overridePos.Value, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
+            }
+            else
+            {
+                spriteBatch.Draw(m_texBase, m_vecPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
+            }
+            
         }
 
 
