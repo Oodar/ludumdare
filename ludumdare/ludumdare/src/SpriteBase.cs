@@ -94,7 +94,7 @@ namespace ludumdare.src
             m_texBase = contentManager.Load<Texture2D>(texLocation);
             SetOrigin(origin);
 
-            m_iMaxFrames = m_texBase.Width / m_iFrameWidth - 1;
+            m_iMaxFrames = m_texBase.Width / m_iFrameWidth;
 
             // Construct initial frame Rect
             m_frameRect = new Rectangle(0, 0, m_iFrameWidth, m_texBase.Height);
@@ -108,19 +108,22 @@ namespace ludumdare.src
         {  
             m_fTimeAccumulator += (gameTime.ElapsedGameTime.Milliseconds / 100.0f);
 
-            if (m_fTimeAccumulator > m_fFrameTime )
+            if (m_fTimeAccumulator > /*m_fFrameTime*/ 10.0f )
             {
+                // Increment frame counter (but loop around when max frames are reached)
+                m_iCurrFrame = (m_iCurrFrame + 1) % m_iMaxFrames;
+
                 m_frameRect.X = m_iCurrFrame * m_iFrameWidth;
                 m_frameRect.Y = 0;
 
                 m_frameRect.Width = m_iFrameWidth;
                 m_frameRect.Height = m_texBase.Height;
                 
-                // Increment frame counter (but loop around when max frames are reached)
-                m_iCurrFrame = (m_iCurrFrame + 1) % m_iMaxFrames;
-
+              
                 m_fTimeAccumulator = 0.0f;
             }
+
+           
             
         }
 
@@ -167,7 +170,7 @@ namespace ludumdare.src
             // Calculate AABBs for each frame of the animation
             for (int x = 0; x < m_iMaxFrames; x++)
             {
-                // Calculate rect for the the frame @ x
+                // Calculate rect for the the frame # x
                 currentFrameRect.X = x * m_iFrameWidth;
                 currentFrameRect.Y = 0;
 
@@ -208,19 +211,12 @@ namespace ludumdare.src
                     }
                 }
 
-                Console.WriteLine("Frame Number: " + x + " Max X: " + maxX + " Max Y: " + maxY + " MinX: " + minX + " MinY: " + minY);
-
-                // Calculate middle position
-                int midX = ((maxX - minX) / 2) + minX;
-                int midY = ((maxY - minY) / 2) + minY;
-
-                //Console.WriteLine("MidX: " + midX + " MidY: " + midY);
-
+                // Create new bounding box + push onto m_AABBs
                 Rectangle bbox = new Rectangle(minX, minY, maxX, maxY);
-
                 m_AABBs.Add(bbox);
 
-                //Console.WriteLine(bbox.ToString());
+
+                //Console.WriteLine("x: " + x + " " + bbox.ToString());
 
             }
         }
