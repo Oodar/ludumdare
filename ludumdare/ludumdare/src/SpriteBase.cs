@@ -108,7 +108,7 @@ namespace ludumdare.src
         {  
             m_fTimeAccumulator += (gameTime.ElapsedGameTime.Milliseconds / 100.0f);
 
-            if (m_fTimeAccumulator > /*m_fFrameTime*/ 10.0f )
+            if (m_fTimeAccumulator > m_fFrameTime )
             {
                 // Increment frame counter (but loop around when max frames are reached)
                 m_iCurrFrame = (m_iCurrFrame + 1) % m_iMaxFrames;
@@ -122,8 +122,6 @@ namespace ludumdare.src
               
                 m_fTimeAccumulator = 0.0f;
             }
-
-           
             
         }
 
