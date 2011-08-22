@@ -19,9 +19,22 @@ namespace ludumdare.src
         CENTER,
     }
     #endregion
+
+    [Flags]
+    enum PlaybackOptions
+    {
+        None = 0, // Defaults to looped animation
+        Once = 1,
+        Reverse = 2,
+        FlipHorizontal = 4,
+        FlipVertical = 8
+    }
   
     class SpriteBase
     {
+
+        PlaybackOptions m_playbackOptions;
+
         #region Member Variables
         
         Vector2 m_vecPos;
@@ -74,6 +87,7 @@ namespace ludumdare.src
         public int CurrentFrame
         {
             get { return m_iCurrFrame; }
+            set { m_iCurrFrame = value; }
         }
 
         public bool DisplayAABBs
@@ -81,12 +95,20 @@ namespace ludumdare.src
             set { m_bDisplayAABBs = value; }
         }
 
+        public PlaybackOptions AnimationOptions
+        {
+            get { return m_playbackOptions; }
+            set { m_playbackOptions = value; }
+        }
+
         #endregion
 
-        #region Constructors
+        #region Constructor
 
         public SpriteBase(Vector2 pos, int frameWidth, float frameRate, GraphicsDevice pDevice )
         {
+            m_playbackOptions = PlaybackOptions.None;
+
             m_vecPos = pos;
             m_fScale = 1.0f;
             m_fRotation = 0.0f;
@@ -132,8 +154,17 @@ namespace ludumdare.src
 
             if (m_fTimeAccumulator > m_fFrameTime )
             {
-                // Increment frame counter (but loop around when max frames are reached)
-                m_iCurrFrame = (m_iCurrFrame + 1) % m_iMaxFrames;
+                // Increment frame counter
+                int nextFrame = m_iCurrFrame + 1;
+
+                if (m_playbackOptions.HasFlag(PlaybackOptions.Once) && (nextFrame >= (m_iMaxFrames-1)) )
+                {
+                    m_iCurrFrame = (m_iMaxFrames - 1);
+                }
+                else
+                {
+                    m_iCurrFrame = ( m_iCurrFrame + 1 ) % m_iMaxFrames;
+                }
 
                 m_frameRect.X = m_iCurrFrame * m_iFrameWidth;
                 m_frameRect.Y = 0;
@@ -189,7 +220,18 @@ namespace ludumdare.src
             }
 
 
-            spriteBatch.Draw(m_texBase, currPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, SpriteEffects.None, 1);
+            SpriteEffects effects = 0;
+
+            if (m_playbackOptions.HasFlag(PlaybackOptions.FlipHorizontal))
+            {
+                effects |= SpriteEffects.FlipHorizontally;
+            }
+            if (m_playbackOptions.HasFlag(PlaybackOptions.FlipVertical))
+            {
+                effects |= SpriteEffects.FlipVertically;
+            }
+
+            spriteBatch.Draw(m_texBase, currPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, effects, 1);
         }
 
 
