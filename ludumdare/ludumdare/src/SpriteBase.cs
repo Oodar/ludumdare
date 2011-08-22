@@ -85,7 +85,7 @@ namespace ludumdare.src
 
         #region Constructors
 
-        public SpriteBase(Vector2 pos, int frameWidth, int frameRate, GraphicsDevice pDevice )
+        public SpriteBase(Vector2 pos, int frameWidth, float frameRate, GraphicsDevice pDevice )
         {
             m_vecPos = pos;
             m_fScale = 1.0f;
@@ -94,7 +94,7 @@ namespace ludumdare.src
             m_iCurrFrame = 0;
             m_iFrameWidth = frameWidth;
 
-            m_fFrameTime = (float)(1.0f / frameRate);
+            m_fFrameTime = (1.0f / frameRate);
             
             m_AABBs = new List<Rectangle>();
 
