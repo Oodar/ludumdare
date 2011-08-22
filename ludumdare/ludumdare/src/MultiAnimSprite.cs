@@ -59,11 +59,19 @@ namespace ludumdare.src
             }
         }
 
-        public void Draw( SpriteBatch spriteBatch )
+        public void Draw( SpriteBatch spriteBatch, GraphicsDevice pDevice, bool debug )
         {
             if (!(m_strCurrAnim.Equals("NO_ANIMS_LOADED")))
             {
-                m_SpriteAnims[m_strCurrAnim].Draw(spriteBatch, m_vecPos);
+                if (debug)
+                {
+                    m_SpriteAnims[m_strCurrAnim].DisplayAABBs = true;
+                }
+                else
+                {
+                    m_SpriteAnims[m_strCurrAnim].DisplayAABBs = false;
+                }
+                m_SpriteAnims[m_strCurrAnim].Draw(spriteBatch, m_vecPos, pDevice);
             }
 
         }
