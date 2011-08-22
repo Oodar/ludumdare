@@ -18,7 +18,6 @@ namespace ludumdare.src
         BOTTOM_RIGHT,
         CENTER,
     }
-    #endregion
 
     [Flags]
     enum PlaybackOptions
@@ -29,7 +28,9 @@ namespace ludumdare.src
         FlipHorizontal = 4,
         FlipVertical = 8
     }
-  
+
+    #endregion
+
     class SpriteBase
     {
 
@@ -101,6 +102,11 @@ namespace ludumdare.src
             set { m_playbackOptions = value; }
         }
 
+        public int MaxFrameNum
+        {
+            get { return m_iMaxFrames; }
+        }
+
         #endregion
 
         #region Constructor
@@ -154,16 +160,45 @@ namespace ludumdare.src
 
             if (m_fTimeAccumulator > m_fFrameTime )
             {
-                // Increment frame counter
-                int nextFrame = m_iCurrFrame + 1;
+                // Potention next frame counter
+                int nextFrame = 0;
 
-                if (m_playbackOptions.HasFlag(PlaybackOptions.Once) && (nextFrame >= (m_iMaxFrames-1)) )
+                if (m_playbackOptions.HasFlag(PlaybackOptions.Reverse))
                 {
-                    m_iCurrFrame = (m_iMaxFrames - 1);
+                    nextFrame = m_iCurrFrame - 1;
+
+                    // If PlaybackOptions.Once is set, we shouldn't wrap around from 0
+                    if (m_playbackOptions.HasFlag(PlaybackOptions.Once) && nextFrame < 0 )
+                    {
+                        m_iCurrFrame = 0;
+                    }
+                    else
+                    {
+                        if (nextFrame < 0)
+                        {
+                            m_iCurrFrame = (m_iMaxFrames - 1);
+                        }
+                        else
+                        {
+                            m_iCurrFrame = nextFrame;
+                        }
+                    }
                 }
                 else
-                {
-                    m_iCurrFrame = ( m_iCurrFrame + 1 ) % m_iMaxFrames;
+                { 
+                    // Not going in reverse, so increment counter forwards
+                    nextFrame = m_iCurrFrame + 1;
+
+                    // If we're only playing once, we want to stop the counter going forwards
+                    if (m_playbackOptions.HasFlag(PlaybackOptions.Once) && nextFrame >= (m_iMaxFrames - 1))
+                    {
+                        m_iCurrFrame = (m_iMaxFrames - 1);
+                    }
+                    else
+                    {
+                        m_iCurrFrame = nextFrame % m_iMaxFrames;
+                    }
+
                 }
 
                 m_frameRect.X = m_iCurrFrame * m_iFrameWidth;

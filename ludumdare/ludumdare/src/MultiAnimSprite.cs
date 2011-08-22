@@ -28,6 +28,12 @@ namespace ludumdare.src
             get { return m_strCurrAnim;  }
         }
 
+        public Vector2 Position
+        {
+            get { return m_vecPos; }
+            set { m_vecPos = value; }
+        }
+
         #endregion
         
         public MultiAnimSprite( Vector2 pos )
@@ -43,9 +49,10 @@ namespace ludumdare.src
             m_SpriteAnims.Add(animName, sprite);
         }
 
-        public void PlayAnimation(string animName)
+        public void PlayAnimation(string animName, Nullable<PlaybackOptions> playbackOptions)
         {
 
+            // Reset previous animation
             if (m_SpriteAnims.ContainsKey(m_strCurrAnim))
             {
                 m_SpriteAnims[m_strCurrAnim].CurrentFrame = 0;
@@ -54,6 +61,28 @@ namespace ludumdare.src
             if (m_SpriteAnims.ContainsKey(animName))
             {
                 m_strCurrAnim = animName;
+
+                // Set AnimationOptions to playbackOptions passed in this function
+                if (playbackOptions != null)
+                {
+                    m_SpriteAnims[m_strCurrAnim].AnimationOptions = playbackOptions.Value;
+                }
+                
+
+                if (m_SpriteAnims[m_strCurrAnim].AnimationOptions.HasFlag(PlaybackOptions.Reverse))
+                {
+                    // Set anims with Reverse flag to start from last frame
+                    m_SpriteAnims[m_strCurrAnim].CurrentFrame = (m_SpriteAnims[m_strCurrAnim].MaxFrameNum - 1);
+                }
+            }
+        }
+        
+        // Sets PlaybackOptions for currently selected animation
+        public void SetPlaybackOptions( PlaybackOptions playbackOptions )
+        {
+            if (m_SpriteAnims.ContainsKey(m_strCurrAnim))
+            {
+                m_SpriteAnims[m_strCurrAnim].AnimationOptions = playbackOptions;
             }
         }
 
