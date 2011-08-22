@@ -45,6 +45,12 @@ namespace ludumdare.src
 
         public void PlayAnimation(string animName)
         {
+
+            if (m_SpriteAnims.ContainsKey(m_strCurrAnim))
+            {
+                m_SpriteAnims[m_strCurrAnim].CurrentFrame = 0;
+            }
+
             if (m_SpriteAnims.ContainsKey(animName))
             {
                 m_strCurrAnim = animName;
