@@ -86,6 +86,9 @@ namespace ludumdare
             slimeWalk.DisplayAABBs = true;
             slimeIdle.DisplayAABBs = true;
 
+            slimeCrouch.AnimationOptions = PlaybackOptions.Once;
+            slimeDeath.AnimationOptions = PlaybackOptions.Once;
+
             //spritesToDraw.Add(slimeCrouch);
             //spritesToDraw.Add(slimeDeath);
             //spritesToDraw.Add(slimeWalk);
