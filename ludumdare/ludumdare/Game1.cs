@@ -28,6 +28,8 @@ namespace ludumdare
 
         List<SpriteBase> spritesToDraw;
 
+        bool crouching;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -52,6 +54,8 @@ namespace ludumdare
             Window.Title = "XNA LD Framework";
 
             spritesToDraw = new List<SpriteBase>();
+
+            crouching = false;
 
             base.Initialize();
         }
@@ -86,21 +90,21 @@ namespace ludumdare
             slimeWalk.DisplayAABBs = true;
             slimeIdle.DisplayAABBs = true;
 
-            slimeCrouch.AnimationOptions = PlaybackOptions.Once;
+            slimeCrouch.AnimationOptions = PlaybackOptions.Reverse | PlaybackOptions.Once;
             slimeDeath.AnimationOptions = PlaybackOptions.Once;
 
             //spritesToDraw.Add(slimeCrouch);
             //spritesToDraw.Add(slimeDeath);
             //spritesToDraw.Add(slimeWalk);
 
-            multiAnimTest = new MultiAnimSprite(new Vector2(200, 200));
+            multiAnimTest = new MultiAnimSprite(new Vector2(100, pDevice.PresentationParameters.BackBufferHeight - 100));
 
             multiAnimTest.AddAnimation("IDLE", slimeIdle);
             multiAnimTest.AddAnimation("WALK", slimeWalk);
             multiAnimTest.AddAnimation("CROUCH", slimeCrouch);
             multiAnimTest.AddAnimation("DEATH", slimeDeath);
 
-            multiAnimTest.PlayAnimation("IDLE");
+            multiAnimTest.PlayAnimation("IDLE", null);
 
 
         }
@@ -131,22 +135,35 @@ namespace ludumdare
 
             if (kbState.IsKeyDown(Keys.C))
             {
-                multiAnimTest.PlayAnimation("CROUCH");
+                multiAnimTest.PlayAnimation("CROUCH", PlaybackOptions.Once);
+
+            }
+
+            if (kbState.IsKeyDown(Keys.F))
+            {
+                multiAnimTest.PlayAnimation("CROUCH", PlaybackOptions.Reverse | PlaybackOptions.Once);
+
             }
 
             if (kbState.IsKeyDown(Keys.D))
             {
-                multiAnimTest.PlayAnimation("DEATH");
+                multiAnimTest.PlayAnimation("DEATH", null);
             }
 
             if (kbState.IsKeyDown(Keys.Left))
             {
-                multiAnimTest.PlayAnimation("WALK");
+                multiAnimTest.PlayAnimation("WALK", PlaybackOptions.FlipHorizontal);     
+                multiAnimTest.Position += new Vector2(-2.0f, 0.0f);
+            }
+            if (kbState.IsKeyDown(Keys.Right))
+            {
+                multiAnimTest.PlayAnimation("WALK", PlaybackOptions.None);
+                multiAnimTest.Position += new Vector2(2.0f, 0.0f);
             }
 
             if (kbState.IsKeyDown(Keys.I))
             {
-                multiAnimTest.PlayAnimation("IDLE");
+                multiAnimTest.PlayAnimation("IDLE", null);
             }
 
             foreach (SpriteBase sprite in spritesToDraw)
