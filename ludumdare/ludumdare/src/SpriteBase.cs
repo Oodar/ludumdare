@@ -111,6 +111,34 @@ namespace ludumdare.src
 
         #region Constructor
 
+        public SpriteBase( SpriteBase o )
+        {
+            this.m_vecPos = o.Position;
+            this.m_vecOrigin = o.m_vecOrigin;
+            this.m_playbackOptions = o.AnimationOptions;
+
+            this.m_texBase = o.m_texBase;
+
+            this.m_fScale = o.m_fScale;
+            this.m_fRotation = o.m_fRotation;
+
+            this.m_iCurrFrame = o.m_iCurrFrame;
+            this.m_iMaxFrames = o.m_iMaxFrames;
+            this.m_iFrameWidth = o.m_iFrameWidth;
+
+            this.m_fFrameTime = o.m_fFrameTime;
+            this.m_fTimeAccumulator = o.m_fTimeAccumulator;
+
+            this.m_frameRect = o.m_frameRect;
+
+            this.m_AABBs = o.m_AABBs;
+
+            this.basicEffect = o.basicEffect;
+            this.vertices = o.vertices;
+
+            this.m_bDisplayAABBs = o.m_bDisplayAABBs;
+        }
+
         public SpriteBase(Vector2 pos, int frameWidth, float frameRate, GraphicsDevice pDevice )
         {
             m_playbackOptions = PlaybackOptions.None;

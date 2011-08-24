@@ -102,6 +102,11 @@ namespace ludumdare
 
             multiAnimTest.PlayAnimation("IDLE", null);
 
+            gameObjects.Add(slimeCrouch);
+            gameObjects.Add(slimeDeath);
+            gameObjects.Add(slimeWalk);
+            gameObjects.Add(slimeIdle);
+
             gameObjects.Add(multiAnimTest);
 
 

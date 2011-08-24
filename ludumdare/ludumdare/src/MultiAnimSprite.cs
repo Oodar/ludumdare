@@ -57,8 +57,9 @@ namespace ludumdare.src
         public void AddAnimation(string animName, SpriteBase sprite)
         {
             // sync sprite's position to this MultiAnimSprites'
-            sprite.Position = m_vecPos;
-            m_SpriteAnims.Add(animName, sprite);
+            SpriteBase spriteCopy = new SpriteBase(sprite);
+            spriteCopy.Position = m_vecPos;
+            m_SpriteAnims.Add(animName, spriteCopy);
         }
 
         public void PlayAnimation(string animName, Nullable<PlaybackOptions> playbackOptions)
