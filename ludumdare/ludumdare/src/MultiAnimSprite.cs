@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ludumdare.src
 {
-    class MultiAnimSprite
+    class MultiAnimSprite : IGameObject
     {
 
         // Dictionary used to look up for animations
@@ -105,7 +105,7 @@ namespace ludumdare.src
                 m_SpriteAnims[m_strCurrAnim].Position = m_vecPos;
                 m_SpriteAnims[m_strCurrAnim].Update(gameTime);
             }
-       }
+        }
 
         public void Draw( SpriteBatch spriteBatch, GraphicsDevice pDevice )
         {

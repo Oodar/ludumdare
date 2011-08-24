@@ -31,7 +31,7 @@ namespace ludumdare.src
 
     #endregion
 
-    class SpriteBase
+    class SpriteBase : IGameObject
     {
 
         PlaybackOptions m_playbackOptions;
