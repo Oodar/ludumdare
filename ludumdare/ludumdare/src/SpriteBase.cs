@@ -213,28 +213,18 @@ namespace ludumdare.src
             
         }
 
-        public void Draw(SpriteBatch spriteBatch, Nullable<Vector2> overridePos, GraphicsDevice pDevice )
+        public void Draw(SpriteBatch spriteBatch, GraphicsDevice pDevice )
         {
-            Vector2 currPos = new Vector2();
-
-            if (overridePos != null)
-            {
-                currPos = overridePos.Value;
-            }
-            else
-            {
-                currPos = m_vecPos;
-            }     
 
             if (m_bDisplayAABBs)
             {
 
                 Rectangle currentAABB = m_AABBs[m_iCurrFrame];
 
-                vertices[0].Position = new Vector3(currPos.X + currentAABB.X, currPos.Y + currentAABB.Y, 0);
-                vertices[1].Position = new Vector3(currPos.X + currentAABB.Width, currPos.Y + currentAABB.Y, 0);
-                vertices[2].Position = new Vector3(currPos.X + currentAABB.Width, currPos.Y + currentAABB.Height, 0);
-                vertices[3].Position = new Vector3(currPos.X + currentAABB.X, currPos.Y + currentAABB.Height, 0);
+                vertices[0].Position = new Vector3(m_vecPos.X + currentAABB.X, m_vecPos.Y + currentAABB.Y, 0);
+                vertices[1].Position = new Vector3(m_vecPos.X + currentAABB.Width, m_vecPos.Y + currentAABB.Y, 0);
+                vertices[2].Position = new Vector3(m_vecPos.X + currentAABB.Width, m_vecPos.Y + currentAABB.Height, 0);
+                vertices[3].Position = new Vector3(m_vecPos.X + currentAABB.X, m_vecPos.Y + currentAABB.Height, 0);
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -266,7 +256,7 @@ namespace ludumdare.src
                 effects |= SpriteEffects.FlipVertically;
             }
 
-            spriteBatch.Draw(m_texBase, currPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, effects, 1);
+            spriteBatch.Draw(m_texBase, m_vecPos, m_frameRect, Color.White, MathHelper.ToRadians(m_fRotation), m_vecOrigin, m_fScale, effects, 1);
         }
 
 

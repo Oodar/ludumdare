@@ -22,6 +22,8 @@ namespace ludumdare.src
         // Current position - MUST SYNC ALL ANIMS TO THIS
         Vector2 m_vecPos;
 
+        bool m_bShowDebug;
+
         #region Accessors
         public string CurrentAnimation
         {
@@ -34,6 +36,12 @@ namespace ludumdare.src
             set { m_vecPos = value; }
         }
 
+        public bool DisplayAABBs
+        {
+            get { return m_bShowDebug;}
+            set { m_bShowDebug = value; }
+        }
+
         #endregion
         
         public MultiAnimSprite( Vector2 pos )
@@ -41,11 +49,15 @@ namespace ludumdare.src
             m_SpriteAnims = new Dictionary<string, SpriteBase>();
             m_strCurrAnim = "NO_ANIMS_LOADED";
 
+            m_bShowDebug = false;
+
             m_vecPos = pos;
         }
 
         public void AddAnimation(string animName, SpriteBase sprite)
         {
+            // sync sprite's position to this MultiAnimSprites'
+            sprite.Position = m_vecPos;
             m_SpriteAnims.Add(animName, sprite);
         }
 
@@ -90,15 +102,16 @@ namespace ludumdare.src
         {
             if (!(m_strCurrAnim.Equals("NO_ANIMS_LOADED")))
             {
+                m_SpriteAnims[m_strCurrAnim].Position = m_vecPos;
                 m_SpriteAnims[m_strCurrAnim].Update(gameTime);
             }
-        }
+       }
 
-        public void Draw( SpriteBatch spriteBatch, GraphicsDevice pDevice, bool debug )
+        public void Draw( SpriteBatch spriteBatch, GraphicsDevice pDevice )
         {
             if (!(m_strCurrAnim.Equals("NO_ANIMS_LOADED")))
             {
-                if (debug)
+                if (m_bShowDebug)
                 {
                     m_SpriteAnims[m_strCurrAnim].DisplayAABBs = true;
                 }
@@ -106,7 +119,7 @@ namespace ludumdare.src
                 {
                     m_SpriteAnims[m_strCurrAnim].DisplayAABBs = false;
                 }
-                m_SpriteAnims[m_strCurrAnim].Draw(spriteBatch, m_vecPos, pDevice);
+                m_SpriteAnims[m_strCurrAnim].Draw(spriteBatch, pDevice);
             }
 
         }
