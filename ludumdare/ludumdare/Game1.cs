@@ -26,9 +26,7 @@ namespace ludumdare
 
         MultiAnimSprite multiAnimTest;
 
-        List<SpriteBase> spritesToDraw;
-
-        bool crouching;
+        List<IGameObject> gameObjects;
 
         public Game1()
         {
@@ -53,9 +51,9 @@ namespace ludumdare
             graphics.ApplyChanges();
             Window.Title = "XNA LD Framework";
 
-            spritesToDraw = new List<SpriteBase>();
+            gameObjects = new List<IGameObject>();
 
-            crouching = false;
+           
 
             base.Initialize();
         }
@@ -93,10 +91,6 @@ namespace ludumdare
             slimeCrouch.AnimationOptions = PlaybackOptions.Reverse | PlaybackOptions.Once;
             slimeDeath.AnimationOptions = PlaybackOptions.Once;
 
-            //spritesToDraw.Add(slimeCrouch);
-            //spritesToDraw.Add(slimeDeath);
-            //spritesToDraw.Add(slimeWalk);
-
             multiAnimTest = new MultiAnimSprite(new Vector2(100, pDevice.PresentationParameters.BackBufferHeight - 100));
 
             multiAnimTest.AddAnimation("IDLE", slimeIdle);
@@ -104,7 +98,11 @@ namespace ludumdare
             multiAnimTest.AddAnimation("CROUCH", slimeCrouch);
             multiAnimTest.AddAnimation("DEATH", slimeDeath);
 
+            multiAnimTest.DisplayAABBs = true;
+
             multiAnimTest.PlayAnimation("IDLE", null);
+
+            gameObjects.Add(multiAnimTest);
 
 
         }
@@ -166,13 +164,10 @@ namespace ludumdare
                 multiAnimTest.PlayAnimation("IDLE", null);
             }
 
-            foreach (SpriteBase sprite in spritesToDraw)
+            foreach (IGameObject gameObject in gameObjects)
             {
-                sprite.Update(gameTime);
+                gameObject.Update(gameTime);
             }
-
-            multiAnimTest.Update( gameTime );
-
 
             base.Update(gameTime);
         }
@@ -187,12 +182,11 @@ namespace ludumdare
            
             spriteBatch.Begin();
 
-            foreach (SpriteBase sprite in spritesToDraw)
+           
+            foreach (IGameObject gameObject in gameObjects)
             {
-                sprite.Draw(spriteBatch, null, pDevice);
+                gameObject.Draw(spriteBatch, pDevice);
             }
-
-            multiAnimTest.Draw(spriteBatch, pDevice, true);
 
             spriteBatch.End();
 
